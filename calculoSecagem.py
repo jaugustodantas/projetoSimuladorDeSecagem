@@ -81,4 +81,26 @@ class calculoSecagem:
         p2 = b*math.pow(math.log(ru0),2)
         return p1+p2
     
+    def razaoUmidadePorTempo(self):
+        #eq 33
+        a = self.calculoVariavelA(self)
+        b = self.calculoVariavelB(self)
+        t = self.deltaT
+        te = self.calculoTempoEquivalente()
+        var1 = t + te
+        var2 =math.sqrt(math.pow(a,2)+4*(b*var1))
+        var3 = ((-1*a)-var2)/(2*b)
+        rUf = math.exp(var3)
+        return rUf
+
+    def calculoUmidadeAposIncremeto(self):
+        # eq34
+        ruf= self.razaoUmidadePorTempo(self)
+        ue = self.calculoUmidadeEquilibrio(self)
+        u0 = self.conversaoUmidadeBaseSeca(self.umidadeInicial)
+        uf= ruf*(u0-ue)+ue
+        return uf
     
+    def calculoRazaoMisturaAr(self):
+        #eq 35
+        ...
