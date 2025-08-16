@@ -14,7 +14,7 @@ class calculoSecagem:
         self.to = temperaturaSecagem
         self.tgo = temperaturaInicialMassa
         #self.P = massaEspecifica
-    def balancoMasas (self):
+    def balancoMassas (self):
         #calculo do balanço de massas 
         #explicar variáveis
         r = (self.P*self.ve* self.areaCamara*0.1)/(self.vazao*self.deltaT*60*(1-self.conversaoUmidadeBaseSeca()))
@@ -32,7 +32,7 @@ class calculoSecagem:
         #parei na construção dessa função
         #razão de mistura tem que ser implementada (ela muda a cada interação com o ar)
         cp = self.calorEspecificoDoMilho()
-        r = self.balancoMasas()
+        r = self.balancoMassas()
         u=self.conversaoUmidadeBaseSeca
         te = ((0.24+0.45*(self.w))*self.to+cp*r(1+u)*self.tgo)/(0.24+0.45*self.w+cp*r*(1+u))
         return te
@@ -103,4 +103,23 @@ class calculoSecagem:
     
     def calculoRazaoMisturaAr(self):
         #eq 35
+        #wf = wo +R(U-Uf)
+        r = self.balancoMassas()
+        uf = self.calculoUmidadeAposIncremeto()
+        wf = self.w + r*(self.umidadeInicial - uf)
+        return wf
+    
+    def calculoCalorLatenteExcedente(self):
+        #eq 37
+        #deltaL = (606 - 0.57*Te)*4.35*exp(-28.25* U)
+        #necessário para o calculo das temperaturas finais
+        te= self.temperaturaDeEquilibrio()
+        deltaL = (606-0.57*te)*4.35*math.exp(-28.25*self.umidadeAtual)
+        return deltaL
+
+    def calculoTemperaturaFinais(self):
+        #eq 39, passo 12
+        # Considerando que a temperatura do grão será igual a temperatuda do ar
+        # parte1 = (0.24 + 0.45W0)*Te - (Wf - W0)*(588+deltaL - Te) + Cp*R(1+U)*Te
+        
         ...
