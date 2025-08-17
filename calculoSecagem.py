@@ -17,23 +17,24 @@ class calculoSecagem:
     def balancoMassas (self):
         #calculo do balanço de massas 
         #explicar variáveis
-        r = (self.P*self.ve* self.areaCamara*0.1)/(self.vazao*self.deltaT*60*(1-self.conversaoUmidadeBaseSeca()))
+        r = (self.P*self.ve* self.areaCamara*0.1)/(self.vazao*self.deltaT*60*(1-self.conversaoUmidadeBaseSeca(self.umidadeInicial)))
         return r
-    def conversaoUmidadeBaseSeca(self):
+    def conversaoUmidadeBaseSeca(self,umidade):
         #converte a umidade de base umida para base seca
-        baseSeca = (self.umidadeInicial/(100-self.umidadeInicial))/100
+        u=umidade
+        baseSeca = (u/(100-u))/100
         return baseSeca
 
     def calorEspecificoDoMilho (self):
         #calor especifico do milho
-        return (0.35 +(0.851*self.conversaoUmidadeBaseSeca()/(1+self.conversaoUmidadeBaseSeca())))
+        return (0.35 +(0.851*self.conversaoUmidadeBaseSeca(self.umidadeAtual)/(1+self.conversaoUmidadeBaseSeca(self.umidadeAtual))))
 
     def temperaturaDeEquilibrio(self):
         #parei na construção dessa função
         #razão de mistura tem que ser implementada (ela muda a cada interação com o ar)
         cp = self.calorEspecificoDoMilho()
         r = self.balancoMassas()
-        u=self.conversaoUmidadeBaseSeca
+        u=self.conversaoUmidadeBaseSeca(self.umidadeAtual)
         te = ((0.24+0.45*(self.w))*self.to+cp*r(1+u)*self.tgo)/(0.24+0.45*self.w+cp*r*(1+u))
         return te
     
@@ -121,5 +122,16 @@ class calculoSecagem:
         #eq 39, passo 12
         # Considerando que a temperatura do grão será igual a temperatuda do ar
         # parte1 = (0.24 + 0.45W0)*Te - (Wf - W0)*(588+deltaL - Te) + Cp*R(1+U)*Te
-        
-        ...
+        # parte2 = 0.24+0.45*wf+cp*r*(1+u)
+        deltaL = self.calculoCalorLatenteExcedente()
+        u = self.conversaoUmidadeBaseSeca(self.umidadeAtual)
+        wf = self.calculoRazaoMisturaAr()
+        cp = self.calorEspecificoDoMilho()
+        r = self.balancoMassas()
+        te = self.temperaturaDeEquilibrio()
+        w0 = self.w
+        p1 = (0.24+(0.45*w0)) * te - (wf-w0)*(588+deltaL - te) + cp*r(1+u)*te
+        p2 = 0.24+0.45*wf+cp*r*(1+u)
+        tf = p1/p2
+        return tf
+    
