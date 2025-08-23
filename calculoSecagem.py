@@ -1,6 +1,6 @@
 import math
 from conversores import conversor
-class calculoSecagem:
+class calculoSecagemThompson:
     def __init__(self,umidadeInicial,massaEspecifica,vazaoAr,areaCamara,intervaloTempo,razaoMistura,
                  temperaturaSecagem, temperaturaInicialMassa,pressaoAtmosferica,umidadeAtual,volumeEspecificoAr,altura):
         self.umidadeInicial = umidadeInicial #umidade bu
@@ -34,6 +34,7 @@ class calculoSecagem:
         self.tf = self.CalculoTemperaturaFinal()
         self.tef = self.calculoPressaoVaporSaturadoEmTe(self.tf)
         self.umidadeSaida = self.calculoUmidadeRelativaEmTe(self.tef)
+        
     def calculoRazaoMassas (self):
         #calculo da razão entre as massas ar seco x ar seco 
         #Segue a Eq 24 do livro do Juareaz
@@ -185,3 +186,23 @@ class calculoSecagem:
         p7 = p4*p5
         p8 = p3-p7+p6
         return p8/p2
+    
+    def calculoDeltatUr(self):
+        a=self.varA
+        b= self.varB
+        if self.varB > 0:
+            p1 = 4*b*math.log(0.5)
+            p2 = math.pow(a,2)
+            p3 = p2-p1
+            p4 = math.sqrt(p3)
+            p5 = (-a+p4)/(2*b)
+            return p5
+        elif self.varB < 0:
+            p1 = 4*b*math.log(0.5)
+            p2 = math.pow(a,2)
+            p3 = p2-p1
+            p4 = math.sqrt(p3)
+            p5 = (-a-p4)/(2*b)
+            return p5
+        else:
+            return (-math.log(0.5))/a

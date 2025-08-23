@@ -1,5 +1,5 @@
 from psicometria import psicometria
-from calculoSecagem import calculoSecagem
+from calculoSecagem import calculoSecagemThompson
 from salvarJson import salvarInfos
 def calculoInversao (umidadeInicial):
     return umidadeInicial - ((umidadeInicial-11.5)*0.45)
@@ -12,15 +12,15 @@ def main ():
     umidade0 = 32
     umidade1 = calculoInversao(umidade0)
     massaEspecifica = 245
-    vazao = 33333
-    area = 30
+    vazao = 555.56
+    area = 25
     tempSec = 36
     w = p.razaoMistura()
-    tempo = 0.2
+    tempo = 8
     vespeci = 0.96
     tempM = 28
-    h = 0.1
-    alturaDeCamada = 3
+    h = 0.5
+    alturaDeCamada = 2
     tempoAcumulado = 0 
     camadas = int(alturaDeCamada/h)
   #  print(camadas)
@@ -34,7 +34,7 @@ def main ():
             umidade1 = 11.5
 
         for x in range(camadas):
-            cs = calculoSecagem(umidade0,massaEspecifica,vazao,area,tempo,w,tempSec,tempM,pa,umidade1,vespeci,h)
+            cs = calculoSecagemThompson(umidade0,massaEspecifica,vazao,area,tempo,w,tempSec,tempM,pa,umidade1,vespeci,h)
             cs.calculoRazaoMassas()
             # print(f"informações camada {x}\n")
             # print(f" tempo {cs.tempoEqui}\n")
